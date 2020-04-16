@@ -1446,6 +1446,7 @@ public class SemanticAnalyzer extends BaseSemanticAnalyzer {
 
     HiveOperation operation = queryState.getHiveOperation();
     try {
+      //createTable 为 ASTNode类型
       analyzer.analyzeInternal(createTable);
     } finally {
       queryState.setCommandType(operation);
@@ -11721,6 +11722,7 @@ public class SemanticAnalyzer extends BaseSemanticAnalyzer {
     Map<String, Operator> aliasToOpInfo = new LinkedHashMap<String, Operator>();
 
     // Recurse over the subqueries to fill the subquery part of the plan
+    //遍历
     for (String alias : qb.getSubqAliases()) {
       QBExpr qbexpr = qb.getSubqForAlias(alias);
       Operator<?> operator = genPlan(qb, qbexpr);
@@ -12542,8 +12544,10 @@ public class SemanticAnalyzer extends BaseSemanticAnalyzer {
     // 1. Generate Resolved Parse tree from syntax tree
     boolean needsTransform = needsTransform();
     //change the location of position alias process here
+    //处理 GROUPBY and ORDERBY...
     processPositionAlias(ast);
     PlannerContext plannerCtx = pcf.get();
+    //这里虽然是非判端，但是方法里会对qb做设值操作
     if (!genResolvedParseTree(ast, plannerCtx)) {
       return;
     }
@@ -12590,6 +12594,7 @@ public class SemanticAnalyzer extends BaseSemanticAnalyzer {
     }
 
     // 2. Gen OP Tree from resolved Parse Tree
+    // QueryBlock生成Operator Tree
     Operator sinkOp = genOPTree(ast, plannerCtx);
 
     boolean usesMasking = false;
@@ -13833,6 +13838,7 @@ public class SemanticAnalyzer extends BaseSemanticAnalyzer {
       tableDesc.setMaterialization(isMaterialization);
       tableDesc.setStoredAsSubDirectories(storedAsDirs);
       tableDesc.setNullFormat(rowFormatParams.nullFormat);
+      //设置qb
       qb.setTableDesc(tableDesc);
 
       return selectStmt;

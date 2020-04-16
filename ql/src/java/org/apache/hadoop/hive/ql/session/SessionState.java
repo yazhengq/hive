@@ -405,7 +405,9 @@ public class SessionState implements ISessionAuthState{
     this(conf, null);
   }
 
+  //设置Session信息
   public SessionState(HiveConf conf, String userName) {
+    //hive/yarn/hdp的xml文件
     this.sessionConf = conf;
     this.userName = userName;
     this.registry = new Registry(false);
@@ -418,6 +420,7 @@ public class SessionState implements ISessionAuthState{
     overriddenConfigurations = new LinkedHashMap<String, String>();
     overriddenConfigurations.putAll(HiveConf.getConfSystemProperties());
     // if there isn't already a session name, go ahead and create it.
+    // Hive Client中的sessionid
     if (StringUtils.isEmpty(conf.getVar(HiveConf.ConfVars.HIVESESSIONID))) {
       conf.setVar(HiveConf.ConfVars.HIVESESSIONID, makeSessionId());
       getConsole().printInfo("Hive Session ID = " + getSessionId());
@@ -1023,6 +1026,7 @@ public class SessionState implements ISessionAuthState{
    * get the current session.
    */
   public static SessionState get() {
+    //threadlocal，解决多线程共享问题
     return tss.get().state;
   }
 

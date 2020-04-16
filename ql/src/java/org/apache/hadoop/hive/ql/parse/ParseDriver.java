@@ -227,6 +227,7 @@ public class ParseDriver {
     parser.setTreeAdaptor(adaptor);
     HiveParser.statement_return r = null;
     try {
+      // 执行解析
       r = parser.statement();
     } catch (RecognitionException e) {
       throw new ParseException(parser.errors);
@@ -240,6 +241,7 @@ public class ParseDriver {
       throw new ParseException(parser.errors);
     }
 
+    //返回ASTNode
     ASTNode tree = (ASTNode) r.getTree();
     tree.setUnknownTokenBoundaries();
     return tree;

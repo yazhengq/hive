@@ -44,6 +44,7 @@ public final class SemanticAnalyzerFactory {
       if(query != null && query.length() > 30) {
         query = query.substring(0, 30);
       }
+      // queryId 排查字段乱序问题时，用到这个。
       String msg = "Unknown HiveOperation for query='" + query + "' queryId=" + queryState.getQueryId();
       //throw new IllegalStateException(msg);
       LOG.debug(msg);
@@ -51,6 +52,7 @@ public final class SemanticAnalyzerFactory {
     return sem;
   }
 
+  //分析
   private static BaseSemanticAnalyzer getInternal(QueryState queryState, ASTNode tree)
       throws SemanticException {
     if (tree.getToken() == null) {
@@ -63,6 +65,7 @@ public final class SemanticAnalyzerFactory {
         return DDLSemanticAnalyzerFactory.getAnalyzer(tree, queryState);
       }
 
+      //针对不同功能的sql，生产不同的tree，对应hive的多种编译方式
       switch (tree.getType()) {
       case HiveParser.TOK_EXPLAIN:
         return new ExplainSemanticAnalyzer(queryState);
@@ -86,6 +89,7 @@ public final class SemanticAnalyzerFactory {
       case HiveParser.TOK_ALTERVIEW: {
         Tree child = tree.getChild(1);
         // TOK_ALTERVIEW_AS
+
         assert child.getType() == HiveParser.TOK_QUERY;
         queryState.setCommandType(HiveOperation.ALTERVIEW_AS);
         return new SemanticAnalyzer(queryState);

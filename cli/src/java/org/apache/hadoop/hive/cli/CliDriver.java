@@ -399,6 +399,7 @@ public class CliDriver {
     }
 
     try {
+        //这里解析命令
       CommandProcessorResponse lastRet = new CommandProcessorResponse();
       CommandProcessorResponse ret;
 
@@ -753,6 +754,8 @@ public class CliDriver {
       return 2;
     }
 
+    // 当前会话是否在 silent 模式运行。如果不是 silent 模式，所以 info 级打在日志中的消息，都将以标准错误流的形式输出到控制台。
+    // 当前集群配置应该是false 默认值
     if (!ss.getIsSilent()) {
       if (logInitFailed) {
         System.err.println(logInitDetailMessage);
@@ -762,6 +765,7 @@ public class CliDriver {
     }
 
     // set all properties specified via command line
+    // 处理用户级的配置命令 如：hive> set hive.session.silent=true;
     HiveConf conf = ss.getConf();
     for (Map.Entry<Object, Object> item : ss.cmdProperties.entrySet()) {
       conf.set((String) item.getKey(), (String) item.getValue());
@@ -769,6 +773,7 @@ public class CliDriver {
     }
 
     // read prompt configuration and substitute variables.
+    // 读取变量并替换变量
     prompt = conf.getVar(HiveConf.ConfVars.CLIPROMPT);
     prompt = new VariableSubstitution(new HiveVariableSource() {
       @Override
@@ -778,6 +783,7 @@ public class CliDriver {
     }).substitute(conf, prompt);
     prompt2 = spacesForString(prompt);
 
+    // Tez相关
     if (HiveConf.getBoolVar(conf, ConfVars.HIVE_CLI_TEZ_SESSION_ASYNC)) {
       // Start the session in a fire-and-forget manner. When the asynchronously initialized parts of
       // the session are needed, the corresponding getters and other methods will wait as needed.
@@ -795,6 +801,7 @@ public class CliDriver {
 
     // execute cli driver work
     try {
+        //执行
       executeDriver(ss, conf, oproc);
       return 0;
     } catch (CommandProcessorException e) {
@@ -817,6 +824,7 @@ public class CliDriver {
       throws Exception {
 
     CliDriver cli = new CliDriver();
+    //这里step into
     cli.setHiveVariables(oproc.getHiveVariables());
 
     // use the specified database if specified
@@ -859,6 +867,7 @@ public class CliDriver {
       }
       if (line.trim().endsWith(";") && !line.trim().endsWith("\\;")) {
         line = prefix + line;
+        //调用processLine
         response = cli.processLine(line, true);
         prefix.setLength(0);;
         curDB = getFormattedDb(conf, ss);

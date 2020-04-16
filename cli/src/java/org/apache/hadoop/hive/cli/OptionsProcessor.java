@@ -113,6 +113,7 @@ public class OptionsProcessor {
 
   }
 
+  //处理变量
   public boolean process_stage1(String[] argv) {
     try {
       commandLine = new GnuParser().parse(options, argv);
@@ -145,6 +146,7 @@ public class OptionsProcessor {
     return true;
   }
 
+  //处理-e -f 参数
   public boolean process_stage2(CliSessionState ss) {
     ss.getConf();
 

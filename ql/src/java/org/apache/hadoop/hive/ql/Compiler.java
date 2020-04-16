@@ -202,6 +202,7 @@ public class Compiler {
     }
 
     // SemanticAnalyzerFactory also sets the hive operation in query state
+    //要先构造基本的语义分析器，
     BaseSemanticAnalyzer sem = SemanticAnalyzerFactory.get(driverContext.getQueryState(), tree);
 
     if (!driverContext.isRetrial()) {
@@ -216,6 +217,7 @@ public class Compiler {
     }
 
     // Do semantic analysis and plan generation
+    //sem加载配置后，直接进入编译 一路调用实现 最终方法为：SemanticAnalyzer类中的：void analyzeInternal(ASTNode ast, Supplier<PlannerContext> pcf)
     sem.analyze(tree, context);
 
     if (executeHooks) {

@@ -56,6 +56,7 @@ public class CliSessionState extends SessionState {
    */
   public List<String> initFiles = new ArrayList<String>();
 
+  //调用父类的构造方法
   public CliSessionState(HiveConf conf) {
     super(conf);
   }
